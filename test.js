@@ -16,21 +16,21 @@ var VehicleReg = require('./models/vehicle-reg');
 
 
 // add service to the vehicle database
-var serviceName = "minorrepair";
-var dayCharge = 45;
-var nightCharge = 54;
-var tag = "minorrepair";
+var serviceName = "flattyretubeless";
+var dayCharge = 44;
+var nightCharge = 44;
+var tag = "breakdown";
 var tnc = "additional taxes applied";
-var servicecode = "mt01";
+var servicecode = "ftb01";
 
 
-        Vehicle.updateMany({}, {$set:{"vehicle.image":"","vehicle.makeImage":"https://media.zigcdn.com/media/content/2015/May/hero-honda-logo-04052015-m1-720x540_720x540.jpg","vehicle.modelImage":"https://media.zigcdn.com/media/content/2015/May/hero-honda-logo-04052015-m1-720x540_720x540.jpg"}, $push: { "service_info": {"servicename":serviceName,"daycharge":dayCharge,"nightcharges":nightCharge, "tag":tag,"tandc":tnc, "servicecode":servicecode}, }}, { new: true }, function (err, vehicle) {
-            if (err) {
-               return console.log(err);
-            }
-            console.log(vehicle)
+//         Vehicle.updateMany({}, {$set:{"vehicle.image":"","vehicle.makeImage":"https://media.zigcdn.com/media/content/2015/May/hero-honda-logo-04052015-m1-720x540_720x540.jpg","vehicle.modelImage":"https://media.zigcdn.com/media/content/2015/May/hero-honda-logo-04052015-m1-720x540_720x540.jpg"}, $push: { "service_info": {"servicename":serviceName,"daycharge":dayCharge,"nightcharges":nightCharge, "tag":tag,"tandc":tnc, "servicecode":servicecode}, }}, { new: true }, function (err, vehicle) {
+//             if (err) {
+//                return console.log(err);
+//             }
+//             console.log(vehicle)
 
-})
+// })
 
 
 // delete the data
@@ -54,19 +54,51 @@ var servicecode = "mt01";
 
 
 // make = _.uniq(make);
-    // console.log(make);
+// console.log(make);
 
-  
 
-    // for(var j = 0; j<make.length; j++)
-    // {
-    //     _.find
-    // }
+
+// for(var j = 0; j<make.length; j++)
+// {
+//     _.find
+// }
 //    console.log(allbikes);
 
-    // for(var j = 0; j<make.length; j++)
-    // {
-    //    var c = _.groupBy(allbikes,make[j])
-    //     console.log(c);
-    // }
-        // console.log(urls);
+// for(var j = 0; j<make.length; j++)
+// {
+//    var c = _.groupBy(allbikes,make[j])
+//     console.log(c);
+// }
+// console.log(urls);
+
+
+
+//  Vehicle.findOne({ "_id": "5970d1afa315c90011b87e2b" }, function (err, vehicleinfo) {
+//             if (err) {
+//                 var rs = {};
+//                 rs.Success = false;
+//                 rs.Message = err;
+//                 console.log(rs);
+//             }
+//             if (vehicleinfo === null) {
+//                 var rs = {};
+//                 rs.Success = true;
+//                 rs.Registerd = false;
+
+//                 rs.Message = "ID not found"
+//                 return console.log(rs)
+//             }
+//             var rs= {};
+//             rs.services = [];
+//             for(var i = 0; i<vehicleinfo.service_info.length; i++)
+//             {
+//                 if(vehicleinfo.service_info[i].tag = "breakdown")
+//                 {
+//                      delete vehicleinfo.service_info[i]["tag"];
+//                      delete vehicleinfo.service_info[i]["servicecode"];
+//                     rs.services.push(vehicleinfo.service_info[i]);
+//                 }
+
+//             }
+//         console.log(rs);
+//         })

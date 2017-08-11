@@ -44,18 +44,18 @@ app.post('/registerd', (req, res) => {
             var rs = {};
             rs.Success = false;
             rs.Message = err;
-           return res.status(200).send(rs);
+            return res.status(200).send(rs);
         }
         //if vehicle not registered create new doccument for the vehicle and send all the make names and images for the vehicle type
         if (vehicle1 === null) {
-            var newvehicle = new VehicleReg({ vehicleRegNo: req.body.reg_id, vehicleType: req.body.vehicleType });
+            var newvehicle = new VehicleReg({ vehicleRegNo: JSON.parse(req.body.reg_id), vehicleType: JSON.parse(req.body.vehicleType) });
             newvehicle.save(function (err) {
                 if (err) {
                     var rs = {};
                     rs.Success = false;
                     rs.Registerd = false;
                     rs.Message = "Vehicle info not saved"
-                     console.log(rs);
+                   res.status(200).send(rs);
                 }
                 Vehicle.aggregate([{ $match: { 'vehicle.type': vehicleType } }], function (err, allbikes) {
                     if (err) {
@@ -89,16 +89,16 @@ app.post('/registerd', (req, res) => {
                     }
                 })
             })
-            return console.log(rs)
+            returnres.status(200).send(rs)
         }
-// if vehicle registered then take out the vehicle id. Return back the make and model and service details.
+        // if vehicle registered then take out the vehicle id. Return back the make and model and service details.
         var vId = vehicle1.vehicleId;
         Vehicle.findOne({ "_id": vId }, function (err, vehicle2) {
             if (err) {
                 var rs = {};
                 rs.Success = false;
                 rs.Message = err;
-                return console.log(rs);
+                returnres.status(200).send(rs);
             }
             if (vehicle2 === null) {
                 var rs = {};
@@ -106,7 +106,7 @@ app.post('/registerd', (req, res) => {
                 rs.Registerd = false;
 
                 rs.Message = "Registered vehicle make model not found"
-                return console.log(rs)
+                returnres.status(200).send(rs)
             }
             var rs = {};
             rs.success = true;
@@ -114,7 +114,7 @@ app.post('/registerd', (req, res) => {
             rs.model = vehicle2.vehicle.model;
             rs.availableServices = vehicle2.service_info;
             res.status(200).send(rs);
-            })
+        })
 
 
     })
@@ -123,10 +123,89 @@ app.post('/registerd', (req, res) => {
 })
 
 
+
+//APi to send all the models of a make
+app.post('/models', (req, res) => {
+    var reg_id = req.body.reg_id;
+    var makeName = req.body.make;
+    //update the registerd vehicle database for the given registration number
+    Vehicle.aggregate([{ $match: { 'vehicle.make': makeName } }], function (err, allbikes) {
+        if (err) {
+            var rst = {};
+            rst.Success = false;
+            rst.Message = err;
+            return res.status(200).send(rst);
+        }
+       
+        if (allbikes.length === 0) {
+            var rst = {};
+            rst.Success = true;
+            rst.Message = "make not found";
+            return res.status(200).send(rst);
+        }
+        var rst = {};
+        rst.Success = true;
+        rst.Message = "Models for the given make with images";
+        rst.models = [];
+
+        for (var i = 0; i < allbikes.length; i++) {
+            var obj = {};
+            obj.modelName = allbikes[i].vehicle.model;
+            obj.modelImage = allbikes[i].vehicle.modelImage;
+            obj.uniqueId = allbikes[i]._id;
+            rst.models.push(obj);
+        }
+        console.log(rst);
+        res.status(200).send(rst);
+
+    })
+})
+
+
+//sending required services
+app.post('/services', (req, res) => {
+    var reg_id = req.body.reg_id;
+    var vehicleId = req.body.vehicleId;
+    var serviceName = req.body.serviceName;
+
+   
+    Vehicle.findOne({ "_id": vehicleId }, function (err, vehicleinfo) {
+            if (err) {
+                var rs = {};
+                rs.Success = false;
+                rs.Message = err;
+               res.status(200).send(rs);
+            }
+            if (vehicleinfo === null) {
+                var rs = {};
+                rs.Success = true;
+                rs.Registerd = false;
+
+                rs.Message = "ID not found"
+                returnres.status(200).send(rs)
+            }
+            var rs= {};
+            rs.services = [];
+            for(var i = 0; i<vehicleinfo.service_info.length; i++)
+            {
+                if(vehicleinfo.service_info[i].tag = serviceName)
+                {
+                     delete vehicleinfo.service_info[i]["tag"];
+                     delete vehicleinfo.service_info[i]["servicecode"];
+                    rs.services.push(vehicleinfo.service_info[i]);
+                }
+
+            }
+       res.status(200).send(rs);
+        })
+
+})
+
+
 app.listen(port, () => {
-    console.log(`started on port ${port}`);
+   console.log(`started on port ${port}`);
 });
 
 
-module.exports = { app };  
+module.exports = { app };
 
